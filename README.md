@@ -1,3 +1,3 @@
-## My Own Security Tools
+## My Security Tools
 
-Here is my own scripts and other security tools.
+Here is a collection of scripts and other security tools that I use.

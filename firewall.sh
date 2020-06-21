@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/bin/bash
 #
 # Copyright 2020 Marcos Azevedo (aka pylinux) : psylinux[at]gmail.com
 #
@@ -13,25 +13,12 @@
 #   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
+#
 
-import urllib
-import requests
-import socket
-import re
-
-
-url = 'http://example.com/'
-
-
-def get_external_ip():
-    site = urllib.urlopen("http://meuip.com.br/").read()
-    grab = re.findall('([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)', site)
-    address = grab[0]
-    return address
-
-
-if __name__ == '__main__':
-    myip = get_external_ip()
-    myhost = socket.gethostname()
-    payload = {'client': myhost, 'ip': myip}
-    r = requests.get(url, params=payload)
+iptables -t nat -F
+iptables -t mangle -F
+iptables -t filter -F
+iptables -P INPUT DROP
+iptables -P FORWARD DROP
+iptables -A INPUT -p tcp -m state --state ESTABLISHED,RELATED -j ACCEPT
+iptables -L

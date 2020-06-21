@@ -14,7 +14,7 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 #
-# Acknowledgment: 
+# Acknowledgment:
 # Thank you Thiago Ribeiro for all the improvements!
 #
 
@@ -23,10 +23,10 @@ import json
 import uuid
 import argparse
 import requests
-import shutil
 import sqlite3
 import hashlib
 import tempfile
+
 
 def set_table(con):
     cursor = con.cursor()
@@ -39,6 +39,7 @@ def set_table(con):
         cursor.execute("CREATE INDEX index_part_hash ON images(hash)")
         con.commit()
 
+
 def results(file):
     urls = []
     with open(file, 'r') as content:
@@ -50,6 +51,7 @@ def results(file):
                     urls.append(_d)
     return urls
 
+
 def set_image_path(img_path):
     if not os.path.isdir(img_path):
         try:
@@ -57,8 +59,9 @@ def set_image_path(img_path):
         except OSError:
             print("Was not possible to create the image path: %s", img_path)
 
+
 def download_image(img_path, url, con):
-    mtypes = {'image/jpeg': 'jpg', 'image/png':'png', 'image/gif':'gif'}
+    mtypes = {'image/jpeg': 'jpg', 'image/png': 'png', 'image/gif': 'gif'}
 
     h = requests.head(url)
     header = h.headers
@@ -78,7 +81,6 @@ def download_image(img_path, url, con):
                 fp.write(r.raw.data)
                 fp.seek(0)
                 hash = hashlib.md5(fp.read()).hexdigest()
-
                 cursor.execute("SELECT hash, name from images WHERE hash='%s'" % hash)
                 con.commit()
                 check_hash = cursor.fetchone()
@@ -107,7 +109,6 @@ if __name__ == "__main__":
     if len(urls) > 0:
         con = sqlite3.connect(DB_NAME)
         set_table(con)
-
         for url in urls:
             download_image(IMG_PATH, url, con)
     else:

@@ -16,6 +16,7 @@
 
 import re
 
+
 log = open('/var/log/apache2/access.log', 'r')
 for lines in log:
     grab = re.findall('([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)', lines)

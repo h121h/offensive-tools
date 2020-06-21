@@ -1,9 +1,5 @@
 #!/bin/bash
 #
-# Need to create input file as follow:
-# user1 pass1
-# user2 pass2
-#
 # Copyright 2020 Marcos Azevedo (aka pylinux) : psylinux[at]gmail.com
 #
 #   Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,17 +15,44 @@
 #   limitations under the License.
 #
 
-if [ $# -ne 1 ];then
-   echo "Usage: ./script <input-file>"
-   exit 1
-fi
+r=$(( $RANDOM % 4 ));
 
-while read user pass; do
-#curl -iL --fail --data-urlencode user="$user" --data-urlencode password="$pass" http://example.com/login 1>/dev/null 2>&1
-curl -X POST --data "" -iL --fail --basic -u $user:$pass http://pentesteracademylab.appspot.com/lab/webapp/basicauth 1>/dev/null 2>&1
-   if [ $? -eq 0 ];then
-      echo "ok"
-   elif [ $? -ne 0 ]; then
-      echo "failed"
-   fi
-done < $1
+echo -e "[+] Changing MacAddr\n"
+case $r in
+	0)
+		#MAC_CISCO_1
+  		vend="70:b3:17"
+	;;
+	1)
+		#MAC_CISCO_2
+		vend="70:C9:C6"
+	;;
+	2)
+		#MAC_CISCO_3
+		vend="70:D3:79"
+	;;
+	3)
+		#MAC_CISCO_4
+		vend="F4:AC:C1"
+	;;
+esac
+
+premac="$vend:11:22:33"
+
+echo -e "\t[-] Setting wlan0 DOWN"
+sudo ip link set wlan0 down
+sleep 3
+
+echo -e "\t[-] Using a CISCO MacAddr"
+echo -e "\t[----------]" && macchanger -m $premac wlan0
+sleep 1
+echo -e "\t[----------]" && macchanger -ea wlan0
+sleep 2
+
+echo -e "\t[-] Setting wlan0 UP\n"
+sudo ip link set wlan0 up
+sleep 3
+
+echo -e "[+] Changing TTL"
+echo 129 > /proc/sys/net/ipv4/ip_default_ttl
+

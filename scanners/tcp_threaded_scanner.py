@@ -69,9 +69,8 @@ for j in range(1, 1000):
 
 queue.join()
 
-# wait for all threads to exit 
+# wait for all threads to exit
 for item in threads:
     item.join()
 
 print "[+] TCP Scanner Complete!"
-

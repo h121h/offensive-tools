@@ -22,6 +22,7 @@ NC='\033[0m'
 
 for ((i = 1; i > 0; i++)); do 
 {
-    echo -e "${RED}[$i] :: ${NC}$(ping -c1 $1)" 
+    echo -e "${RED}[$i] :: ${NC}$(ping -c1 $1 | grep "bytes from" | cut -d " " -f 4 | cut -d ":" -f 1;) ${GREEN}OK"
+    sleep 1s
 }
 done

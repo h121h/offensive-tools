@@ -1,0 +1,122 @@
+dn: CN=Sunita Rahman,CN=Users,DC=megabank,DC=local
+cn: Sunita Rahman
+sAMAccountName: sunita
+userPrincipalName: sunita@megabank.local
+
+dn: CN=Abigail Jeffers,CN=Users,DC=megabank,DC=local
+cn: Abigail Jeffers
+sAMAccountName: abigail
+userPrincipalName: abigail@megabank.local
+
+dn: CN=Guest,CN=Users,DC=megabank,DC=local
+cn: Guest
+sAMAccountName: Guest
+
+dn: CN=DefaultAccount,CN=Users,DC=megabank,DC=local
+cn: DefaultAccount
+sAMAccountName: DefaultAccount
+
+dn: CN=Ryan Bertrand,OU=Contractors,OU=MegaBank Users,DC=megabank,DC=local
+cn: Ryan Bertrand
+sAMAccountName: ryan
+userPrincipalName: ryan@megabank.local
+
+dn: CN=Marko Novak,OU=Employees,OU=MegaBank Users,DC=megabank,DC=local
+cn: Marko Novak
+sAMAccountName: marko
+userPrincipalName: marko@megabank.local
+
+dn: CN=Marcus Strong,CN=Users,DC=megabank,DC=local
+cn: Marcus Strong
+sAMAccountName: marcus
+userPrincipalName: marcus@megabank.local
+
+dn: CN=Angela Perkins,CN=Users,DC=megabank,DC=local
+cn: Angela Perkins
+sAMAccountName: angela
+userPrincipalName: angela@megabank.local
+
+dn: CN=Felicia Carter,CN=Users,DC=megabank,DC=local
+cn: Felicia Carter
+sAMAccountName: felicia
+userPrincipalName: felicia@megabank.local
+
+dn: CN=Sally May,CN=Users,DC=megabank,DC=local
+cn: Sally May
+sAMAccountName: sally
+userPrincipalName: sally@megabank.local
+
+dn: CN=Fred Carr,CN=Users,DC=megabank,DC=local
+cn: Fred Carr
+sAMAccountName: fred
+userPrincipalName: fred@megabank.local
+
+dn: CN=Gustavo Pallieros,CN=Users,DC=megabank,DC=local
+cn: Gustavo Pallieros
+sAMAccountName: gustavo
+userPrincipalName: gustavo@megabank.local
+
+dn: CN=Steve Rider,CN=Users,DC=megabank,DC=local
+cn: Steve Rider
+sAMAccountName: steve
+userPrincipalName: steve@megabank.local
+
+dn: CN=Annette Nilsson,CN=Users,DC=megabank,DC=local
+cn: Annette Nilsson
+sAMAccountName: annette
+userPrincipalName: annette@megabank.local
+
+dn: CN=Paulo Alcobia,CN=Users,DC=megabank,DC=local
+cn: Paulo Alcobia
+sAMAccountName: paulo
+userPrincipalName: paulo@megabank.local
+
+dn: CN=Claire Norman,CN=Users,DC=megabank,DC=local
+cn: Claire Norman
+sAMAccountName: claire
+userPrincipalName: claire@megabank.local
+
+dn: CN=Ulf Berg,CN=Users,DC=megabank,DC=local
+cn: Ulf Berg
+sAMAccountName: ulf
+userPrincipalName: ulf@megabank.local
+
+dn: CN=Stevie Gerrard,CN=Users,DC=megabank,DC=local
+cn: Stevie Gerrard
+sAMAccountName: stevie
+userPrincipalName: stevie@megabank.local
+
+dn: CN=Annika Larson,CN=Users,DC=megabank,DC=local
+cn: Annika Larson
+sAMAccountName: annika
+userPrincipalName: annika@megabank.local
+
+dn: CN=Zach Armstrong,CN=Users,DC=megabank,DC=local
+cn: Zach Armstrong
+sAMAccountName: zach
+userPrincipalName: zach@megabank.local
+
+dn: CN=Simon Faraday,CN=Users,DC=megabank,DC=local
+cn: Simon Faraday
+sAMAccountName: simon
+userPrincipalName: simon@megabank.local
+
+dn: CN=Per Olsson,CN=Users,DC=megabank,DC=local
+cn: Per Olsson
+sAMAccountName: per
+userPrincipalName: per@megabank.local
+
+dn: CN=Claude Segal,CN=Users,DC=megabank,DC=local
+cn: Claude Segal
+sAMAccountName: claude
+userPrincipalName: claude@megabank.local
+
+dn: CN=Melanie Purkis,CN=Users,DC=megabank,DC=local
+cn: Melanie Purkis
+sAMAccountName: melanie
+userPrincipalName: melanie@megabank.local
+
+dn: CN=Naoki Yamamoto,CN=Users,DC=megabank,DC=local
+cn: Naoki Yamamoto
+sAMAccountName: naoki
+userPrincipalName: naoki@megabank.local

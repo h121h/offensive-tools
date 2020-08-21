@@ -15,7 +15,7 @@
 #   limitations under the License.
 
 import urllib
-import requests
+import urllib.request
 import socket
 import re
 
@@ -33,5 +33,4 @@ def get_external_ip():
 if __name__ == '__main__':
     myip = get_external_ip()
     myhost = socket.gethostname()
-    payload = {'client': myhost, 'ip': myip}
-    r = requests.get(url, params=payload)
+    print('client: ', myhost, 'ip: ', myip)

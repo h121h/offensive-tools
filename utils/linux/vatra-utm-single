@@ -1,0 +1,207 @@
+#!/bin/bash
+#
+# Marcos Azevedo (psylinux@gmail.com)
+# Cel/WhatsApp +55 11 97387-1721
+#
+
+### BEGIN INIT INFO
+# Provides:          vatra-utm
+# Required-Start:    $local_fs $remote_fs $network $syslog
+# Required-Stop:     $local_fs $remote_fs $network $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Start vatra-utm at boot time
+# Description:       Enable service provided by vatra-utm
+### END INIT INFO
+
+# LAN
+LAN01_IF=eth0
+LAN01_IP=172.16.235.133
+
+## Incluindo Biblioteca de Cores
+source color.lib
+
+#-------------------------------------------------
+# Carregando Modulos Necessarios
+#-------------------------------------------------
+/sbin/modprobe ip_tables
+/sbin/modprobe iptable_nat
+/sbin/modprobe iptable_mangle
+/sbin/modprobe ip_nat_ftp
+/sbin/modprobe ip_nat_h323
+/sbin/modprobe ipt_limit
+/sbin/modprobe ipt_tos
+/sbin/modprobe ip_conntrack
+/sbin/modprobe ip_conntrack_ftp
+/sbin/modprobe nf_conntrack_ftp
+/sbin/modprobe ip_nat_ftp
+
+#-------------------------------------------------
+# Inicio das Funcoes
+#-------------------------------------------------
+function rules_cleaning () {
+	echo -e "$amarelo ----: Removendo e limpando todas as regras... $corPadrao"
+	echo " "
+	iptables -F
+	iptables -t nat -F
+	iptables -t mangle -F
+	iptables -X
+	iptables -t nat -X
+	iptables -t mangle -X
+	iptables -Z
+	iptables -F INPUT
+	iptables -F OUTPUT
+	iptables -F POSTROUTING -t nat
+	iptables -F PREROUTING -t nat
+}
+
+function stop() {
+	clear
+	echo " "
+	echo -e "$fundoVermelho ##### ----------------------------- ##### $corPadrao"
+	echo -e "$fundoVermelho #####     PARANDO O Vatra UTM       ##### $corPadrao"
+	echo -e "$fundoVermelho ##### ----------------------------- ##### $corPadrao"
+	echo " "
+
+	echo -e "$amarelo ----: Definindo regra padrao do Firewall. $vermelho"
+	echo -e "$vermelho >>>>>>>>>>>> INPUT = $verde ACCEPT $vermelho <<<<<<<<<<<< $corPadrao"
+	echo -e "$vermelho >>>>>>>>>>>> FORWARD = $verde ACCEPT $vermelho <<<<<<<<<<<< $corPadrao"
+	echo -e "$vermelho >>>>>>>>>>>> OUTPUT = $verde ACCEPT $vermelho <<<<<<<<<<<< $corPadrao"
+	echo " "
+
+	iptables -P INPUT   ACCEPT
+	iptables -P FORWARD ACCEPT
+	iptables -P OUTPUT  ACCEPT
+
+	# Chamando funcao para limpar as tabelas do Netfilter
+	rules_cleaning
+}
+
+function start() {
+	clear
+	echo " "
+	echo -e "$fundoVermelho ##### ----------------------------- ##### $corPadrao"
+	echo -e "$fundoVermelho #####  INICIALIZANDO O Vatra UTM    ##### $corPadrao"
+	echo -e "$fundoVermelho ##### ----------------------------- ##### $corPadrao"
+	echo " "
+
+	# Chamando funcao para limpar as tabelas do Netfilter
+	rules_cleaning
+
+	echo -e "$amarelo ----: Definindo regra padrao do Firewall. $vermelho"
+	echo -e "$vermelho >>>>>>>>>>>> INPUT = $purple DROP $vermelho <<<<<<<<<<<< $corPadrao"
+	echo -e "$vermelho >>>>>>>>>>>> FORWARD = $purple DROP $vermelho <<<<<<<<<<<< $corPadrao"
+	echo -e "$vermelho >>>>>>>>>>>> OUTPUT = $verde ACCEPT $vermelho <<<<<<<<<<<< $corPadrao"
+	echo " "
+
+	iptables -P INPUT   DROP
+	iptables -P FORWARD DROP
+	iptables -P OUTPUT  ACCEPT
+
+	echo " "
+	echo -e "$fundoVermelho ##### ----------------------------- ##### $corPadrao"
+	echo -e "$fundoVermelho #####  ATIVANDO REGRAS DE PROTECAO  ##### $corPadrao"
+	echo -e "$fundoVermelho ##### ----------------------------- ##### $corPadrao"
+	echo " "
+
+	echo -e "$amarelo ----: Ativando Protecao Anti Redirect (Smurf)... $corPadrao"
+	echo "0" > /proc/sys/net/ipv4/conf/all/accept_redirects
+
+	echo -e "$amarelo ----: Ativando Protecao Anti Source Route... $corPadrao"
+	echo "0" > /proc/sys/net/ipv4/conf/all/accept_source_route
+
+	echo -e "$amarelo ----: Ativando Protecao Anti Bogus Response... $corPadrao"
+	echo "1" > /proc/sys/net/ipv4/icmp_ignore_bogus_error_responses
+
+	echo -e "$amarelo ----: Ativando Protecao Anti Synflood... $corPadrao"
+	echo "1" > /proc/sys/net/ipv4/tcp_syncookies
+
+	echo -e "$amarelo ----: Ativando Protecao Anti Ping de Broadcast... $corPadrao"
+	echo "1" > /proc/sys/net/ipv4/icmp_echo_ignore_broadcasts
+
+	echo -e "$amarelo ----: Ativando Protecao Anti Spoofing - Caminho Reverso... $corPadrao"
+	for spoofing in /proc/sys/net/ipv4/conf/*/rp_filter; do
+		echo "1" > $spoofing
+	done
+
+	echo -e "$amarelo ----: Ativando proteção Anto Spoofing no LoopBack local... $corPadrao"
+	iptables -I INPUT ! -i lo -s 127.0.0.0/8 -j DROP
+
+
+	#########-------------------------------------------------
+	## Configuracoes Basicas
+	#########-------------------------------------------------
+
+	echo -e "$amarelo ----: Permitindo trafego de Loopback local... $corPadrao"
+	iptables -I INPUT  -i lo -j ACCEPT
+	iptables -I OUTPUT -o lo -j ACCEPT
+
+	echo -e "$amarelo ----: Bloqueando trafego de Multicast... $corPadrao"
+	iptables -A INPUT -s 224.0.0.0/8 -d 0/0 -j DROP
+	iptables -A INPUT -s 0/0 -d 224.0.0.0/8 -j DROP
+
+	echo -e "$amarelo ----: Permitindo ping com limite de 10 pacotes por segundo... $corPadrao"
+	iptables -A INPUT   -p icmp --icmp-type echo-request -m limit --limit 1/s -j ACCEPT
+	iptables -A INPUT   -p icmp --icmp-type echo-request -j DROP
+	iptables -A OUTPUT  -p icmp --icmp-type echo-request -m limit --limit 1/s -j ACCEPT
+	iptables -A OUTPUT  -p icmp --icmp-type echo-request -j DROP
+
+	echo -e "$amarelo ----: Permitindo trafego de retorno... $corPadrao"
+	iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+
+
+	#########-------------------------------------------------
+	## Tabela FILTER
+	#########-------------------------------------------------
+	echo " "
+	echo -e "$fundoVermelho ##### ----------------------------- ##### $corPadrao"
+	echo -e "$fundoVermelho #####         REGRAS DE FILTER      ##### $corPadrao"
+	echo -e "$fundoVermelho ##### ----------------------------- ##### $corPadrao"
+	echo " "
+
+	echo -e "$amarelo ----: Liberando acesso $vermelho - SYN - $cyan ao Vatra-M1$amarelo... $corPadrao"
+	iptables -A INPUT -p tcp ! --syn -j ACCEPT
+
+	# iptables -A OUTPUT -j ACCEPT -d 192.168.157.103 -o tun+ -p udp -m udp --dport 1194
+	# iptables -A INPUT -j ACCEPT -s 192.168.157.103 -i tun+ -p udp -m udp --sport 1194
+
+	echo -e "$amarelo ----: Liberando acesso $vermelho - VPN - $cyan ao Vatra-M1 $amarelo... $corPadrao"
+	iptables -A INPUT -j ACCEPT -i tun+
+	iptables -A OUTPUT -j ACCEPT -o tun+
+
+}
+
+function status() {
+	if [ "`ps aux | grep vatra-utm | grep -v "grep"`" != "" ]; then
+		return="Iniciado"
+	else
+		return="Parado"
+	fi
+	echo -e "$vermelho $return $corPadrao"
+}
+
+case "$1" in
+	start)
+	    start
+	;;
+
+	stop)
+	    stop
+	;;
+
+	restart)
+	    stop
+	    sleep 2
+	    start
+	;;
+
+	status)
+    	status
+	;;
+
+    *)
+	echo " "
+	echo -e "$vermelho   Uso: /etc/init.d/vatra-utm {start|stop|status|restart} $corPadrao"
+	echo " "
+
+esac
